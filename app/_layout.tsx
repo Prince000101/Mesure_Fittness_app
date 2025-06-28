@@ -10,9 +10,28 @@ import {
   Inter_700Bold
 } from '@expo-google-fonts/inter';
 import * as SplashScreen from 'expo-splash-screen';
-import { FitnessProvider } from '@/contexts/FitnessContext';
+import { ThemeProvider, useTheme } from '@/contexts/ThemeContext';
+import { WorkoutProvider } from '@/contexts/WorkoutContext';
 
 SplashScreen.preventAutoHideAsync();
+
+function RootLayoutContent() {
+  const { isDark } = useTheme();
+  
+  return (
+    <>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="workout-session" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="exercise-library" />
+        <Stack.Screen name="create-workout" />
+        <Stack.Screen name="workout-details" />
+        <Stack.Screen name="+not-found" />
+      </Stack>
+      <StatusBar style={isDark ? "light" : "dark"} />
+    </>
+  );
+}
 
 export default function RootLayout() {
   useFrameworkReady();
@@ -35,12 +54,10 @@ export default function RootLayout() {
   }
 
   return (
-    <FitnessProvider>
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </FitnessProvider>
+    <ThemeProvider>
+      <WorkoutProvider>
+        <RootLayoutContent />
+      </WorkoutProvider>
+    </ThemeProvider>
   );
 }

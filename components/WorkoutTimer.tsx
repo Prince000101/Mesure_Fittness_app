@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Play, Pause, RotateCcw, SkipForward } from 'lucide-react-native';
 import { useState, useEffect, useRef } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface WorkoutTimerProps {
   duration?: number; // in seconds
@@ -24,6 +25,7 @@ export default function WorkoutTimer({
   autoStart = false,
   type = 'rest'
 }: WorkoutTimerProps) {
+  const { theme, isDark } = useTheme();
   const [timeLeft, setTimeLeft] = useState(duration);
   const [isRunning, setIsRunning] = useState(autoStart);
   const [isCompleted, setIsCompleted] = useState(false);
@@ -116,6 +118,8 @@ export default function WorkoutTimer({
     }
   };
 
+  const styles = createStyles(theme, isDark);
+
   return (
     <View style={styles.container}>
       <View style={styles.timerCard}>
@@ -206,7 +210,7 @@ export default function WorkoutTimer({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any, isDark: boolean) => StyleSheet.create({
   container: {
     padding: 20,
   },
@@ -214,9 +218,9 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     overflow: 'hidden',
     marginBottom: 20,
-    shadowColor: '#000',
+    shadowColor: theme.shadow,
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
+    shadowOpacity: isDark ? 0.3 : 0.15,
     shadowRadius: 8,
     elevation: 5,
   },
@@ -300,19 +304,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   quickOptions: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.surface,
     borderRadius: 16,
     padding: 20,
-    shadowColor: '#000',
+    shadowColor: theme.shadow,
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
+    shadowOpacity: isDark ? 0.2 : 0.05,
     shadowRadius: 2,
     elevation: 2,
   },
   quickOptionsLabel: {
     fontSize: 16,
     fontFamily: 'Inter-SemiBold',
-    color: '#1C1C1E',
+    color: theme.text,
     marginBottom: 12,
   },
   quickButtons: {
@@ -323,16 +327,16 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 12,
     borderRadius: 8,
-    backgroundColor: '#F2F2F7',
+    backgroundColor: theme.background,
     alignItems: 'center',
   },
   quickButtonActive: {
-    backgroundColor: '#007AFF',
+    backgroundColor: theme.primary,
   },
   quickButtonText: {
     fontSize: 14,
     fontFamily: 'Inter-Medium',
-    color: '#1C1C1E',
+    color: theme.text,
   },
   quickButtonTextActive: {
     color: '#FFFFFF',
