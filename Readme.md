@@ -3,7 +3,7 @@
 </p>
 
 # 🏋️‍♂️ Fitness Tracker App
-
+## Built with Bolt.new
 
 A simple and efficient **React Native Fitness Tracker App** that helps you **store, manage, and monitor** all your essential fitness stats — such as **weight, height, deadlift records, and other workout metrics** — right from your mobile device.
 
