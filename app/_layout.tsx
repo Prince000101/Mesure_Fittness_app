@@ -13,18 +13,21 @@ import * as SplashScreen from 'expo-splash-screen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemeProvider, useTheme } from '@/contexts/ThemeContext';
 import { WorkoutProvider } from '@/contexts/WorkoutContext';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
 
 SplashScreen.preventAutoHideAsync();
 
 const ONBOARDING_KEY = 'onboarding_complete';
 
-function RootLayoutContent() {
+function StatusBarWrapper() {
   const { isDark } = useTheme();
-  const [isChecking, setIsChecking] = useState(true);
+  return <StatusBar style={isDark ? "light" : "dark"} />;
+}
+
+function RootLayoutContent() {
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    async function checkOnboarding() {
+    async function init() {
       try {
         const onboarded = await AsyncStorage.getItem(ONBOARDING_KEY);
         if (onboarded !== 'true') {
@@ -32,33 +35,27 @@ function RootLayoutContent() {
         }
       } catch {
         router.replace('/onboarding');
-      } finally {
-        setIsChecking(false);
       }
+      setReady(true);
+      await SplashScreen.hideAsync();
     }
-    checkOnboarding();
+    init();
   }, []);
 
-  if (isChecking) {
-    return (
-      <View style={styles.loading}>
-        <ActivityIndicator size="large" color="#007AFF" />
-      </View>
-    );
-  }
+  if (!ready) return null;
 
   return (
     <>
       <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="onboarding" />
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="onboarding" />
         <Stack.Screen name="workout-session" options={{ presentation: 'modal' }} />
         <Stack.Screen name="exercise-library" />
         <Stack.Screen name="create-workout-routine" />
         <Stack.Screen name="workout-details" />
         <Stack.Screen name="+not-found" />
       </Stack>
-      <StatusBar style={isDark ? "light" : "dark"} />
+      <StatusBarWrapper />
     </>
   );
 }
@@ -73,12 +70,6 @@ export default function RootLayout() {
     'Inter-Bold': Inter_700Bold,
   });
 
-  useEffect(() => {
-    if (fontsLoaded || fontError) {
-      SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded, fontError]);
-
   if (!fontsLoaded && !fontError) {
     return null;
   }
@@ -91,12 +82,3 @@ export default function RootLayout() {
     </ThemeProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  loading: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F2F2F7',
-  },
-});
