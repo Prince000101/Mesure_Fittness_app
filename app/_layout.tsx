@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Stack, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useFrameworkReady } from '@/hooks/useFrameworkReady';
@@ -18,13 +18,8 @@ SplashScreen.preventAutoHideAsync();
 
 const ONBOARDING_KEY = 'onboarding_complete';
 
-function StatusBarWrapper() {
-  const { isDark } = useTheme();
-  return <StatusBar style={isDark ? "light" : "dark"} />;
-}
-
 function RootLayoutContent() {
-  const [ready, setReady] = useState(false);
+  const { isDark } = useTheme();
 
   useEffect(() => {
     async function init() {
@@ -36,13 +31,10 @@ function RootLayoutContent() {
       } catch {
         router.replace('/onboarding');
       }
-      setReady(true);
-      await SplashScreen.hideAsync();
+      SplashScreen.hideAsync();
     }
     init();
   }, []);
-
-  if (!ready) return null;
 
   return (
     <>
@@ -55,7 +47,7 @@ function RootLayoutContent() {
         <Stack.Screen name="workout-details" />
         <Stack.Screen name="+not-found" />
       </Stack>
-      <StatusBarWrapper />
+      <StatusBar style={isDark ? "light" : "dark"} />
     </>
   );
 }
