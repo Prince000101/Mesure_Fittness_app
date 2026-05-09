@@ -30,7 +30,7 @@ export default function WorkoutSessionScreen() {
   }, [currentSession]);
 
   useEffect(() => {
-    let restTimer: NodeJS.Timeout;
+    let restTimer: ReturnType<typeof setInterval>;
     
     if (isResting && restTimeLeft > 0) {
       restTimer = setInterval(() => {
