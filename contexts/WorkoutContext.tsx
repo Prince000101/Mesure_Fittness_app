@@ -112,7 +112,6 @@ interface WorkoutContextType {
 
 const WorkoutContext = createContext<WorkoutContextType | undefined>(undefined);
 
-// Mock exercise library
 const exerciseLibrary: Exercise[] = [
   {
     id: '1',
@@ -186,90 +185,8 @@ const exerciseLibrary: Exercise[] = [
   },
 ];
 
-// Sample workout templates
-const workoutTemplates: Workout[] = [
-  {
-    id: 'template-1',
-    name: 'Upper Body Strength',
-    description: 'Focus on chest, shoulders, and arms',
-    exercises: [
-      {
-        id: 'ex-1',
-        exercise: exerciseLibrary[0], // Bench Press
-        sets: [
-          { id: 'set-1', reps: 10, weight: 80, restTime: 90, completed: false },
-          { id: 'set-2', reps: 8, weight: 85, restTime: 90, completed: false },
-          { id: 'set-3', reps: 6, weight: 90, restTime: 90, completed: false },
-        ],
-        targetSets: 3,
-        targetReps: 8,
-        targetWeight: 85,
-        order: 1,
-      },
-      {
-        id: 'ex-2',
-        exercise: exerciseLibrary[2], // Push-ups
-        sets: [
-          { id: 'set-4', reps: 15, restTime: 60, completed: false },
-          { id: 'set-5', reps: 12, restTime: 60, completed: false },
-          { id: 'set-6', reps: 10, restTime: 60, completed: false },
-        ],
-        targetSets: 3,
-        targetReps: 12,
-        order: 2,
-      },
-    ],
-    duration: 45,
-    difficulty: 'intermediate',
-    category: 'strength',
-    isTemplate: true,
-    isCustom: false,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: 'template-2',
-    name: 'Lower Body Power',
-    description: 'Build leg strength and power',
-    exercises: [
-      {
-        id: 'ex-3',
-        exercise: exerciseLibrary[1], // Deadlift
-        sets: [
-          { id: 'set-7', reps: 5, weight: 120, restTime: 120, completed: false },
-          { id: 'set-8', reps: 5, weight: 130, restTime: 120, completed: false },
-          { id: 'set-9', reps: 3, weight: 140, restTime: 120, completed: false },
-        ],
-        targetSets: 3,
-        targetReps: 5,
-        targetWeight: 130,
-        order: 1,
-      },
-      {
-        id: 'ex-4',
-        exercise: exerciseLibrary[3], // Squats
-        sets: [
-          { id: 'set-10', reps: 12, restTime: 90, completed: false },
-          { id: 'set-11', reps: 10, restTime: 90, completed: false },
-          { id: 'set-12', reps: 8, restTime: 90, completed: false },
-        ],
-        targetSets: 3,
-        targetReps: 10,
-        order: 2,
-      },
-    ],
-    duration: 40,
-    difficulty: 'advanced',
-    category: 'strength',
-    isTemplate: true,
-    isCustom: false,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-];
-
 export function WorkoutProvider({ children }: { children: ReactNode }) {
-  const [workouts, setWorkouts] = useState<Workout[]>(workoutTemplates);
+  const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [workoutSessions, setWorkoutSessions] = useState<WorkoutSession[]>([]);
   const [currentSession, setCurrentSession] = useState<WorkoutSession | null>(null);
   const [personalRecords, setPersonalRecords] = useState<PersonalRecord[]>([]);
@@ -334,49 +251,6 @@ export function WorkoutProvider({ children }: { children: ReactNode }) {
         setBodyMeasurements(measurementsWithDates);
       }
 
-      if (!recordsData) {
-        const sampleRecords: PersonalRecord[] = [
-          {
-            id: '1',
-            exercise: exerciseLibrary[0],
-            type: 'weight',
-            value: 85,
-            unit: 'kg',
-            date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-          },
-          {
-            id: '2',
-            exercise: exerciseLibrary[1],
-            type: 'weight',
-            value: 140,
-            unit: 'kg',
-            date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-          },
-        ];
-        setPersonalRecords(sampleRecords);
-        await AsyncStorage.setItem('personalRecords', JSON.stringify(sampleRecords));
-      }
-
-      if (!measurementsData) {
-        const sampleMeasurements: BodyMeasurement[] = [
-          {
-            id: '1',
-            type: 'weight',
-            value: 75.2,
-            unit: 'kg',
-            date: new Date(),
-          },
-          {
-            id: '2',
-            type: 'bodyFat',
-            value: 12.5,
-            unit: '%',
-            date: new Date(),
-          },
-        ];
-        setBodyMeasurements(sampleMeasurements);
-        await AsyncStorage.setItem('bodyMeasurements', JSON.stringify(sampleMeasurements));
-      }
     } catch (err) {
       setError('Failed to load data');
     } finally {

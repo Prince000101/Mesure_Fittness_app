@@ -144,44 +144,50 @@ export default function BodyMeasurementsScreen() {
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Current Stats Overview */}
-        <View style={styles.statsContainer}>
-          <View style={styles.statCard}>
-            <LinearGradient
-              colors={isDark ? ['#0A84FF', '#0056CC'] : ['#007AFF', '#0056CC']}
-              style={styles.statGradient}
-            >
-              <Scale size={24} color="#FFFFFF" />
-              <Text style={styles.statValue}>
-                {getLatestMeasurement('weight')?.value || '75.2'} kg
-              </Text>
-              <Text style={styles.statLabel}>Current Weight</Text>
-            </LinearGradient>
+        {bodyMeasurements.length > 0 && (
+          <View style={styles.statsContainer}>
+            {getLatestMeasurement('weight') && (
+              <View style={styles.statCard}>
+                <LinearGradient
+                  colors={isDark ? ['#0A84FF', '#0056CC'] : ['#007AFF', '#0056CC']}
+                  style={styles.statGradient}
+                >
+                  <Scale size={24} color="#FFFFFF" />
+                  <Text style={styles.statValue}>
+                    {getLatestMeasurement('weight')?.value} kg
+                  </Text>
+                  <Text style={styles.statLabel}>Current Weight</Text>
+                </LinearGradient>
+              </View>
+            )}
+            
+            {getLatestMeasurement('bodyFat') && (
+              <View style={styles.statCard}>
+                <LinearGradient
+                  colors={isDark ? ['#30D158', '#28A745'] : ['#34C759', '#28A745']}
+                  style={styles.statGradient}
+                >
+                  <Activity size={24} color="#FFFFFF" />
+                  <Text style={styles.statValue}>
+                    {getLatestMeasurement('bodyFat')?.value}%
+                  </Text>
+                  <Text style={styles.statLabel}>Body Fat</Text>
+                </LinearGradient>
+              </View>
+            )}
+            
+            <View style={styles.statCard}>
+              <LinearGradient
+                colors={isDark ? ['#FF6B35', '#F7931E'] : ['#FF6B35', '#F7931E']}
+                style={styles.statGradient}
+              >
+                <Ruler size={24} color="#FFFFFF" />
+                <Text style={styles.statValue}>{Object.keys(measurementsByType).length}</Text>
+                <Text style={styles.statLabel}>Tracked</Text>
+              </LinearGradient>
+            </View>
           </View>
-          
-          <View style={styles.statCard}>
-            <LinearGradient
-              colors={isDark ? ['#30D158', '#28A745'] : ['#34C759', '#28A745']}
-              style={styles.statGradient}
-            >
-              <Activity size={24} color="#FFFFFF" />
-              <Text style={styles.statValue}>
-                {getLatestMeasurement('bodyFat')?.value || '12.5'}%
-              </Text>
-              <Text style={styles.statLabel}>Body Fat</Text>
-            </LinearGradient>
-          </View>
-          
-          <View style={styles.statCard}>
-            <LinearGradient
-              colors={isDark ? ['#FF6B35', '#F7931E'] : ['#FF6B35', '#F7931E']}
-              style={styles.statGradient}
-            >
-              <Ruler size={24} color="#FFFFFF" />
-              <Text style={styles.statValue}>{Object.keys(measurementsByType).length}</Text>
-              <Text style={styles.statLabel}>Tracked</Text>
-            </LinearGradient>
-          </View>
-        </View>
+        )}
 
         {/* Measurements List */}
         <View style={styles.section}>

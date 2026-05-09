@@ -53,7 +53,6 @@ export default function HomeScreen() {
 
   const mainLiftPRs = getMainLiftPRs();
 
-  // Get current body measurements
   const getCurrentBodyStats = () => {
     const latestWeight = bodyMeasurements
       .filter(m => m.type === 'weight')
@@ -68,20 +67,13 @@ export default function HomeScreen() {
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
 
     return {
-      weight: latestWeight ? `${latestWeight.value} ${latestWeight.unit}` : '75.2 kg',
-      bodyFat: latestBodyFat ? `${latestBodyFat.value}${latestBodyFat.unit}` : '12.5%',
-      muscle: latestMuscle ? `${latestMuscle.value} ${latestMuscle.unit}` : '62.7 kg',
+      weight: latestWeight ? `${latestWeight.value} ${latestWeight.unit}` : null,
+      bodyFat: latestBodyFat ? `${latestBodyFat.value}${latestBodyFat.unit}` : null,
+      muscle: latestMuscle ? `${latestMuscle.value} ${latestMuscle.unit}` : null,
     };
   };
 
   const currentBodyStats = getCurrentBodyStats();
-
-  const measurements = [
-    { part: 'Chest', current: '102 cm', change: '+1.5 cm' },
-    { part: 'Arms', current: '38 cm', change: '+0.8 cm' },
-    { part: 'Waist', current: '81 cm', change: '-2.1 cm' },
-    { part: 'Thighs', current: '58 cm', change: '+1.2 cm' },
-  ];
 
   const motivationalQuote = {
     text: "The only bad workout is the one that didn't happen.",
@@ -102,7 +94,7 @@ export default function HomeScreen() {
         <View style={styles.header}>
           <View>
             <Text style={styles.greeting}>Good {getTimeOfDay()}!</Text>
-            <Text style={styles.userName}>Fitness Enthusiast</Text>
+            <Text style={styles.userName}>Let's get started!</Text>
             <Text style={styles.date}>
               {currentDate.toLocaleDateString('en-US', { 
                 weekday: 'long', 
@@ -113,36 +105,39 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* Progress Overview */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Progress Overview</Text>
-          </View>
-          
-          <View style={styles.overviewContainer}>
-            <View style={styles.overviewCard}>
-              <LinearGradient
-                colors={isDark ? ['#0A84FF', '#0056CC'] : ['#007AFF', '#0056CC']}
-                style={styles.overviewGradient}
-              >
-                <Text style={styles.overviewLabel}>Current Weight</Text>
-                <Text style={styles.overviewValue}>{currentBodyStats.weight}</Text>
-                <Text style={styles.overviewChange}>+2.3 kg this month</Text>
-              </LinearGradient>
+        {currentBodyStats.weight && (
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Progress Overview</Text>
             </View>
             
-            <View style={styles.overviewCard}>
-              <LinearGradient
-                colors={isDark ? ['#30D158', '#28A745'] : ['#34C759', '#28A745']}
-                style={styles.overviewGradient}
-              >
-                <Text style={styles.overviewLabel}>Body Fat</Text>
-                <Text style={styles.overviewValue}>{currentBodyStats.bodyFat}</Text>
-                <Text style={styles.overviewChange}>-1.2% this month</Text>
-              </LinearGradient>
+            <View style={styles.overviewContainer}>
+              {currentBodyStats.weight && (
+                <View style={styles.overviewCard}>
+                  <LinearGradient
+                    colors={isDark ? ['#0A84FF', '#0056CC'] : ['#007AFF', '#0056CC']}
+                    style={styles.overviewGradient}
+                  >
+                    <Text style={styles.overviewLabel}>Current Weight</Text>
+                    <Text style={styles.overviewValue}>{currentBodyStats.weight}</Text>
+                  </LinearGradient>
+                </View>
+              )}
+              
+              {currentBodyStats.bodyFat && (
+                <View style={styles.overviewCard}>
+                  <LinearGradient
+                    colors={isDark ? ['#30D158', '#28A745'] : ['#34C759', '#28A745']}
+                    style={styles.overviewGradient}
+                  >
+                    <Text style={styles.overviewLabel}>Body Fat</Text>
+                    <Text style={styles.overviewValue}>{currentBodyStats.bodyFat}</Text>
+                  </LinearGradient>
+                </View>
+              )}
             </View>
           </View>
-        </View>
+        )}
 
         {/* Personal Records */}
         {mainLiftPRs.length > 0 && (
@@ -177,62 +172,51 @@ export default function HomeScreen() {
         )}
 
         {/* Body Measurements */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Body Measurements</Text>
-            <TouchableOpacity 
-              style={styles.addButton}
-              onPress={() => router.push('/body-measurements')}
-            >
-              <Text style={styles.addButtonText}>See All</Text>
-            </TouchableOpacity>
-          </View>
-          
-          {/* Current Body Stats Grid */}
-          <View style={styles.bodyStatsGrid}>
-            <View style={styles.bodyStatCard}>
-              <View style={styles.bodyStatIcon}>
-                <Scale size={20} color={theme.primary} />
-              </View>
-              <Text style={styles.bodyStatLabel}>Weight</Text>
-              <Text style={styles.bodyStatValue}>{currentBodyStats.weight}</Text>
+        {bodyMeasurements.length > 0 && (
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Body Measurements</Text>
+              <TouchableOpacity 
+                style={styles.addButton}
+                onPress={() => router.push('/body-measurements')}
+              >
+                <Text style={styles.addButtonText}>See All</Text>
+              </TouchableOpacity>
             </View>
             
-            <View style={styles.bodyStatCard}>
-              <View style={styles.bodyStatIcon}>
-                <Activity size={20} color={theme.secondary} />
-              </View>
-              <Text style={styles.bodyStatLabel}>Body Fat</Text>
-              <Text style={styles.bodyStatValue}>{currentBodyStats.bodyFat}</Text>
-            </View>
-            
-            <View style={styles.bodyStatCard}>
-              <View style={styles.bodyStatIcon}>
-                <Dumbbell size={20} color='#FF6B35' />
-              </View>
-              <Text style={styles.bodyStatLabel}>Muscle</Text>
-              <Text style={styles.bodyStatValue}>{currentBodyStats.muscle}</Text>
-            </View>
-          </View>
-
-          {/* Detailed Measurements */}
-          <View style={styles.measurementsList}>
-            {measurements.map((measurement, index) => (
-              <View key={index} style={styles.measurementCard}>
-                <Text style={styles.measurementPart}>{measurement.part}</Text>
-                <View style={styles.measurementValues}>
-                  <Text style={styles.measurementCurrent}>{measurement.current}</Text>
-                  <Text style={[
-                    styles.measurementChange,
-                    { color: measurement.change.startsWith('+') ? theme.secondary : theme.error }
-                  ]}>
-                    {measurement.change}
-                  </Text>
+            <View style={styles.bodyStatsGrid}>
+              {currentBodyStats.weight && (
+                <View style={styles.bodyStatCard}>
+                  <View style={styles.bodyStatIcon}>
+                    <Scale size={20} color={theme.primary} />
+                  </View>
+                  <Text style={styles.bodyStatLabel}>Weight</Text>
+                  <Text style={styles.bodyStatValue}>{currentBodyStats.weight}</Text>
                 </View>
-              </View>
-            ))}
+              )}
+              
+              {currentBodyStats.bodyFat && (
+                <View style={styles.bodyStatCard}>
+                  <View style={styles.bodyStatIcon}>
+                    <Activity size={20} color={theme.secondary} />
+                  </View>
+                  <Text style={styles.bodyStatLabel}>Body Fat</Text>
+                  <Text style={styles.bodyStatValue}>{currentBodyStats.bodyFat}</Text>
+                </View>
+              )}
+              
+              {currentBodyStats.muscle && (
+                <View style={styles.bodyStatCard}>
+                  <View style={styles.bodyStatIcon}>
+                    <Dumbbell size={20} color='#FF6B35' />
+                  </View>
+                  <Text style={styles.bodyStatLabel}>Muscle</Text>
+                  <Text style={styles.bodyStatValue}>{currentBodyStats.muscle}</Text>
+                </View>
+              )}
+            </View>
           </View>
-        </View>
+        )}
 
         {/* Motivational Quote */}
         <View style={styles.section}>

@@ -117,9 +117,9 @@ export default function ProfileScreen() {
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
 
     return {
-      weight: latestWeight ? `${latestWeight.value} ${latestWeight.unit}` : userProfile?.weight || '75.2 kg',
-      bodyFat: latestBodyFat ? `${latestBodyFat.value}${latestBodyFat.unit}` : '12.5%',
-      muscle: latestMuscle ? `${latestMuscle.value} ${latestMuscle.unit}` : '62.7 kg',
+      weight: latestWeight ? `${latestWeight.value} ${latestWeight.unit}` : (userProfile?.weight || null),
+      bodyFat: latestBodyFat ? `${latestBodyFat.value}${latestBodyFat.unit}` : null,
+      muscle: latestMuscle ? `${latestMuscle.value} ${latestMuscle.unit}` : null,
     };
   };
 
@@ -174,7 +174,7 @@ export default function ProfileScreen() {
           icon: Target, 
           label: 'Fitness Goals', 
           hasArrow: true, 
-          badge: '3 Active',
+          badge: 'Set goals',
           onPress: () => router.push('/fitness-goals')
         },
         { 
@@ -377,37 +377,45 @@ export default function ProfileScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Body Information</Text>
           <View style={styles.bodyInfoGrid}>
-            <View style={styles.bodyInfoCard}>
-              <View style={styles.bodyInfoIcon}>
-                <Ruler size={20} color={theme.primary} />
+            {userProfile.height && (
+              <View style={styles.bodyInfoCard}>
+                <View style={styles.bodyInfoIcon}>
+                  <Ruler size={20} color={theme.primary} />
+                </View>
+                <Text style={styles.bodyInfoLabel}>Height</Text>
+                <Text style={styles.bodyInfoValue}>{userProfile.height}</Text>
               </View>
-              <Text style={styles.bodyInfoLabel}>Height</Text>
-              <Text style={styles.bodyInfoValue}>{userProfile.height}</Text>
-            </View>
+            )}
             
-            <View style={styles.bodyInfoCard}>
-              <View style={styles.bodyInfoIcon}>
-                <Scale size={20} color={theme.secondary} />
+            {currentBodyStats.weight && (
+              <View style={styles.bodyInfoCard}>
+                <View style={styles.bodyInfoIcon}>
+                  <Scale size={20} color={theme.secondary} />
+                </View>
+                <Text style={styles.bodyInfoLabel}>Weight</Text>
+                <Text style={styles.bodyInfoValue}>{currentBodyStats.weight}</Text>
               </View>
-              <Text style={styles.bodyInfoLabel}>Weight</Text>
-              <Text style={styles.bodyInfoValue}>{currentBodyStats.weight}</Text>
-            </View>
+            )}
             
-            <View style={styles.bodyInfoCard}>
-              <View style={styles.bodyInfoIcon}>
-                <Activity size={20} color='#FF6B35' />
+            {currentBodyStats.bodyFat && (
+              <View style={styles.bodyInfoCard}>
+                <View style={styles.bodyInfoIcon}>
+                  <Activity size={20} color='#FF6B35' />
+                </View>
+                <Text style={styles.bodyInfoLabel}>Body Fat</Text>
+                <Text style={styles.bodyInfoValue}>{currentBodyStats.bodyFat}</Text>
               </View>
-              <Text style={styles.bodyInfoLabel}>Body Fat</Text>
-              <Text style={styles.bodyInfoValue}>{currentBodyStats.bodyFat}</Text>
-            </View>
+            )}
             
-            <View style={styles.bodyInfoCard}>
-              <View style={styles.bodyInfoIcon}>
-                <Dumbbell size={20} color='#9C27B0' />
+            {currentBodyStats.muscle && (
+              <View style={styles.bodyInfoCard}>
+                <View style={styles.bodyInfoIcon}>
+                  <Dumbbell size={20} color='#9C27B0' />
+                </View>
+                <Text style={styles.bodyInfoLabel}>Muscle</Text>
+                <Text style={styles.bodyInfoValue}>{currentBodyStats.muscle}</Text>
               </View>
-              <Text style={styles.bodyInfoLabel}>Muscle</Text>
-              <Text style={styles.bodyInfoValue}>{currentBodyStats.muscle}</Text>
-            </View>
+            )}
           </View>
 
           {/* BMI Card */}

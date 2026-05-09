@@ -84,39 +84,6 @@ export default function WorkoutsScreen() {
 
       if (routinesData) {
         setRoutines(JSON.parse(routinesData));
-      } else {
-        // Load sample routines if none exist
-        const sampleRoutines: WorkoutRoutine[] = [
-          {
-            id: '1',
-            name: 'Morning Strength',
-            exercises: [
-              { id: '1', name: 'Push-ups', sets: 3, reps: 15 },
-              { id: '2', name: 'Squats', sets: 3, reps: 20 },
-              { id: '3', name: 'Plank', duration: 60 },
-            ],
-            schedule: {
-              type: 'weekdays',
-              weekdays: [1, 3, 5], // Mon, Wed, Fri
-            },
-            isActive: true,
-          },
-          {
-            id: '2',
-            name: 'Cardio Session',
-            exercises: [
-              { id: '4', name: 'Running', duration: 1800 },
-              { id: '5', name: 'Jumping Jacks', sets: 3, reps: 30 },
-            ],
-            schedule: {
-              type: 'weekdays',
-              weekdays: [2, 4], // Tue, Thu
-            },
-            isActive: true,
-          },
-        ];
-        setRoutines(sampleRoutines);
-        await AsyncStorage.setItem(STORAGE_KEYS.WORKOUT_ROUTINES, JSON.stringify(sampleRoutines));
       }
 
       if (completionsData) {

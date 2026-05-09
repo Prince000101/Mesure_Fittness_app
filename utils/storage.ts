@@ -63,25 +63,7 @@ export const getUserProfile = async (): Promise<UserProfile | null> => {
     if (profileData) {
       return JSON.parse(profileData);
     }
-    
-    // Return default profile if none exists
-    const defaultProfile: UserProfile = {
-      name: 'Alex Johnson',
-      email: 'alex.johnson@email.com',
-      joinDate: 'January 2024',
-      height: '175 cm',
-      weight: '75.2 kg',
-      age: '28 years',
-      fitnessLevel: 'Intermediate',
-      preferences: {
-        notifications: true,
-        privacy: false,
-        theme: 'system',
-      },
-    };
-    
-    await saveUserProfile(defaultProfile);
-    return defaultProfile;
+    return null;
   } catch (error) {
     console.error('Error getting user profile:', error);
     return null;
@@ -104,49 +86,7 @@ export const getFitnessGoals = async (): Promise<FitnessGoal[]> => {
     if (goalsData) {
       return JSON.parse(goalsData);
     }
-    
-    // Return default goals if none exist
-    const defaultGoals: FitnessGoal[] = [
-      {
-        id: '1',
-        title: 'Lose 5kg',
-        description: 'Reach target weight of 70kg',
-        targetValue: 70,
-        currentValue: 75.2,
-        unit: 'kg',
-        targetDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
-        isCompleted: false,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-      {
-        id: '2',
-        title: 'Bench Press 100kg',
-        description: 'Achieve 1RM of 100kg on bench press',
-        targetValue: 100,
-        currentValue: 85,
-        unit: 'kg',
-        targetDate: new Date(Date.now() + 120 * 24 * 60 * 60 * 1000).toISOString(),
-        isCompleted: false,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-      {
-        id: '3',
-        title: 'Run 5K under 25min',
-        description: 'Complete a 5K run in under 25 minutes',
-        targetValue: 25,
-        currentValue: 28.5,
-        unit: 'min',
-        targetDate: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString(),
-        isCompleted: false,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-    ];
-    
-    await saveFitnessGoals(defaultGoals);
-    return defaultGoals;
+    return [];
   } catch (error) {
     console.error('Error getting fitness goals:', error);
     return [];
@@ -202,40 +142,7 @@ export const getAchievements = async (): Promise<Achievement[]> => {
     if (achievementsData) {
       return JSON.parse(achievementsData);
     }
-    
-    // Return default achievements if none exist
-    const defaultAchievements: Achievement[] = [
-      {
-        id: '1',
-        title: 'First Workout',
-        description: 'Completed your first workout session',
-        iconName: 'Trophy',
-        earnedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-        category: 'workout',
-        isNew: false,
-      },
-      {
-        id: '2',
-        title: 'Week Warrior',
-        description: 'Completed 5 workouts this week',
-        iconName: 'Award',
-        earnedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-        category: 'streak',
-        isNew: true,
-      },
-      {
-        id: '3',
-        title: 'Personal Record',
-        description: 'Set your first personal record',
-        iconName: 'TrendingUp',
-        earnedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-        category: 'progress',
-        isNew: false,
-      },
-    ];
-    
-    await saveAchievements(defaultAchievements);
-    return defaultAchievements;
+    return [];
   } catch (error) {
     console.error('Error getting achievements:', error);
     return [];
