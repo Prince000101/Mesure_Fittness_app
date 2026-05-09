@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useFrameworkReady } from '@/hooks/useFrameworkReady';
@@ -10,17 +10,50 @@ import {
   Inter_700Bold
 } from '@expo-google-fonts/inter';
 import * as SplashScreen from 'expo-splash-screen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemeProvider, useTheme } from '@/contexts/ThemeContext';
 import { WorkoutProvider } from '@/contexts/WorkoutContext';
+import { View, ActivityIndicator, StyleSheet } from 'react-native';
 
 SplashScreen.preventAutoHideAsync();
 
+const ONBOARDING_KEY = 'onboarding_complete';
+
 function RootLayoutContent() {
   const { isDark } = useTheme();
-  
+  const [isChecking, setIsChecking] = useState(true);
+
+  useEffect(() => {
+    async function checkOnboarding() {
+      try {
+        const onboarded = await AsyncStorage.getItem(ONBOARDING_KEY);
+        if (onboarded !== 'true') {
+          const { router } = await import('expo-router');
+          router.replace('/onboarding');
+        }
+      } catch {
+        // If reading fails, assume not onboarded
+        const { router } = await import('expo-router');
+        router.replace('/onboarding');
+      } finally {
+        setIsChecking(false);
+      }
+    }
+    checkOnboarding();
+  }, []);
+
+  if (isChecking) {
+    return (
+      <View style={styles.loading}>
+        <ActivityIndicator size="large" color="#007AFF" />
+      </View>
+    );
+  }
+
   return (
     <>
       <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="onboarding" />
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="workout-session" options={{ presentation: 'modal' }} />
         <Stack.Screen name="exercise-library" />
@@ -61,3 +94,12 @@ export default function RootLayout() {
     </ThemeProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  loading: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F2F2F7',
+  },
+});
