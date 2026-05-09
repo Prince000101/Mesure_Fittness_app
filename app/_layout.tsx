@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Stack } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useFrameworkReady } from '@/hooks/useFrameworkReady';
 import { useFonts } from 'expo-font';
@@ -28,12 +28,9 @@ function RootLayoutContent() {
       try {
         const onboarded = await AsyncStorage.getItem(ONBOARDING_KEY);
         if (onboarded !== 'true') {
-          const { router } = await import('expo-router');
           router.replace('/onboarding');
         }
       } catch {
-        // If reading fails, assume not onboarded
-        const { router } = await import('expo-router');
         router.replace('/onboarding');
       } finally {
         setIsChecking(false);
