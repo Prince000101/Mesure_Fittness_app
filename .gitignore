@@ -27,6 +27,9 @@ yarn-error.*
 .DS_Store
 *.pem
 
+# bolt AI artifacts
+.bolt/
+
 # local env files
 .env*.local
 .env
