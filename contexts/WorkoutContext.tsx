@@ -284,15 +284,25 @@ export function WorkoutProvider({ children }: { children: ReactNode }) {
   const loadData = async () => {
     setIsLoading(true);
     try {
-      const [sessionsData, recordsData, measurementsData] = await Promise.all([
+      const [workoutsData, sessionsData, recordsData, measurementsData] = await Promise.all([
+        AsyncStorage.getItem('workouts'),
         AsyncStorage.getItem('workoutSessions'),
         AsyncStorage.getItem('personalRecords'),
         AsyncStorage.getItem('bodyMeasurements'),
       ]);
 
+      if (workoutsData) {
+        const savedWorkouts = JSON.parse(workoutsData);
+        const workoutsWithDates = savedWorkouts.map((w: any) => ({
+          ...w,
+          createdAt: new Date(w.createdAt),
+          updatedAt: new Date(w.updatedAt),
+        }));
+        setWorkouts(workoutsWithDates);
+      }
+
       if (sessionsData) {
         const sessions = JSON.parse(sessionsData);
-        // Convert date strings back to Date objects for workout sessions
         const sessionsWithDates = sessions.map((session: any) => ({
           ...session,
           startTime: new Date(session.startTime),
@@ -308,7 +318,6 @@ export function WorkoutProvider({ children }: { children: ReactNode }) {
 
       if (recordsData) {
         const records = JSON.parse(recordsData);
-        // Convert date strings back to Date objects for personal records
         const recordsWithDates = records.map((record: any) => ({
           ...record,
           date: new Date(record.date)
@@ -318,7 +327,6 @@ export function WorkoutProvider({ children }: { children: ReactNode }) {
 
       if (measurementsData) {
         const measurements = JSON.parse(measurementsData);
-        // Convert date strings back to Date objects for body measurements
         const measurementsWithDates = measurements.map((measurement: any) => ({
           ...measurement,
           date: new Date(measurement.date)
@@ -326,7 +334,6 @@ export function WorkoutProvider({ children }: { children: ReactNode }) {
         setBodyMeasurements(measurementsWithDates);
       }
 
-      // Load sample data if none exists
       if (!recordsData) {
         const sampleRecords: PersonalRecord[] = [
           {

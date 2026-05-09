@@ -24,7 +24,7 @@ function RootLayoutContent() {
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="workout-session" options={{ presentation: 'modal' }} />
         <Stack.Screen name="exercise-library" />
-        <Stack.Screen name="create-workout" />
+        <Stack.Screen name="create-workout-routine" />
         <Stack.Screen name="workout-details" />
         <Stack.Screen name="+not-found" />
       </Stack>

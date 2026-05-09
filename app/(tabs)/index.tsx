@@ -48,7 +48,7 @@ export default function HomeScreen() {
         };
       }
       return null;
-    }).filter(Boolean).slice(0, 4);
+    }).filter((r): r is NonNullable<typeof r> => r !== null).slice(0, 4);
   };
 
   const mainLiftPRs = getMainLiftPRs();

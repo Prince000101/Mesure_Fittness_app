@@ -2,108 +2,92 @@
   <img src="./icon.png" alt="App Icon" width="120"/>
 </p>
 
-# 🏋️‍♂️ Fitness Tracker App
-## Built with Bolt.new
+# Measure Fitness
+## React Native Fitness Tracker
 
-A simple and efficient **React Native Fitness Tracker App** that helps you **store, manage, and monitor** all your essential fitness stats — such as **weight, height, deadlift records, and other workout metrics** — right from your mobile device.
-
----
-
-## 📸 App Interface
-
-![App Screenshot](./inteface.png)
+A simple and efficient **React Native Fitness Tracker App** built with Expo that helps you **store, manage, and monitor** all your essential fitness stats — such as weight, height, personal records, and workout metrics — right from your mobile device with full offline support.
 
 ---
 
-## 🎯 Key Features
+## Features
 
-- 📏 **Body Stats Tracker**  
-  Log your **height**, **weight**, and other key body measurements with ease.
-
-- 🏋️ **Workout Logbook**  
-  Keep track of your **exercise stats** (like Deadlift, Squat, Bench Press, etc.).
-
-- 📊 **Progress Monitoring**  
-  Track your physical progress over time with simple data views.
-
-- 💾 **Offline First**  
-  Fully functional without internet. All your data is stored securely using **NoSQL local storage** (AsyncStorage or equivalent).
-
-- 🔐 **Privacy Focused**  
-  No logins. No cloud sync. Your data stays on your device.
+- **Body Stats Tracker** - Log weight, body fat, muscle mass, and body measurements
+- **Workout Calendar** - Schedule routines, track completions with a visual calendar
+- **Personal Records** - Track PRs for bench press, deadlift, squat, and more
+- **Workout Sessions** - Run guided workout sessions with set tracking and rest timers
+- **Fitness Goals** - Set and track progress toward fitness targets
+- **Achievements** - Earn badges for milestones
+- **Dark Mode** - Light/dark/system theme support
+- **Offline First** - All data stored locally on device via AsyncStorage
+- **Privacy Focused** - No logins, no cloud sync, data stays on your device
 
 ---
 
-## 🚀 Built With
+## Setup
 
-- ⚛️ **React Native** (with Expo)
-- 💡 JavaScript
-- 🗃️ **NoSQL Local Storage** (AsyncStorage)
+```bash
+git clone https://github.com/Prince000101/Mesure_Fittness_app.git
+cd Mesure_Fittness_app
+npm install
+npx expo start
+```
 
----
+### Testing Options
 
-## 🎥 App Demo (Video)
-
-Watch the app in action:  
-🔗 [LinkedIn Demo Video](https://www.linkedin.com/posts/prince-kumar-41659823b_reactnative-firstapp-mobiledevelopment-activity-7344783870426238976-bGlI?utm_source=share&utm_medium=member_desktop&rcm=ACoAADu1fVIBT8tjXBBLYpxDb6qcgmNAXlg2i74)
-
----
-
-
-
----
-
-## 🛠 Setup & Installation
-
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/Prince000101/your-fitness-app.git
-   cd your-fitness-app
-
-
-2. Install dependencies:
-
-   ```bash
-   npm install
-   ```
-
-3. Run the app using Expo:
-
-   ```bash
-   npx expo start
-   ```
+| Method | Command | Requirements |
+|---|---|---|
+| **Web browser** | `npx expo start --web` | No extra tools |
+| **Expo Go (phone)** | `npx expo start` | Expo Go app on iOS/Android |
+| **Android emulator** | `npx expo start --android` | Android Studio |
+| **iOS simulator** | `npx expo start --ios` | macOS + Xcode |
 
 ---
 
-## ✅ Roadmap / To Do
+## Tech Stack
 
-* [x] Track body stats and exercises
-* [x] Store data locally using NoSQL
-* [ ] Add charts and visual progress tracking
-* [ ] Backup & export data
-* [ ] Add reminder and goal-setting features
-
----
-
-## 🤝 Contribute
-
-Have ideas, suggestions, or want to collaborate?
-Feel free to fork the repo and open a pull request. Contributions are welcome!
+- **React Native** with Expo SDK 53
+- **Expo Router** (file-based navigation)
+- **AsyncStorage** (local NoSQL persistence)
+- **TypeScript**
+- **lucide-react-native** icons
 
 ---
 
-## 👤 Author
+## Project Structure
+
+```
+app/                  # Expo Router pages (file-based routing)
+  (tabs)/             # Tab navigator screens
+    index.tsx         # Home dashboard
+    workouts.tsx      # Workout calendar
+    profile.tsx       # Profile & settings
+  workout-session.tsx # Active workout session
+  personal-records.tsx
+  body-measurements.tsx
+  fitness-goals.tsx
+  achievements.tsx
+  create-workout-routine.tsx
+  exercise-library.tsx
+  workout-details.tsx
+  progress.tsx
+contexts/             # React Context providers
+  ThemeContext.tsx     # Theme (light/dark/system)
+  WorkoutContext.tsx   # Workouts, sessions, records, measurements
+utils/storage.ts      # AsyncStorage helpers
+components/           # Reusable UI components
+types/                # TypeScript type definitions
+```
+
+---
+
+## Author
 
 **Prince Kumar**
-🔗 [LinkedIn Profile](https://www.linkedin.com/in/prince-kumar-41659823b)
-🌐 [GitHub - Prince000101](https://github.com/Prince000101)
+- [LinkedIn](https://www.linkedin.com/in/prince-kumar-41659823b)
+- [GitHub](https://github.com/Prince000101)
 
 ---
 
-## 📃 License
+## License
 
-Licensed under the [MIT License](./LICENSE)
-
----
-
+MIT

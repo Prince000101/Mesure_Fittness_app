@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ColorValue } from 'react-native';
 import { Play, Pause, RotateCcw, SkipForward } from 'lucide-react-native';
 import { useState, useEffect, useRef } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -124,7 +124,7 @@ export default function WorkoutTimer({
     <View style={styles.container}>
       <View style={styles.timerCard}>
         <LinearGradient
-          colors={getTimerColor()}
+          colors={getTimerColor() as [ColorValue, ColorValue]}
           style={styles.timerGradient}
         >
           <Text style={styles.timerLabel}>{getTimerLabel()}</Text>

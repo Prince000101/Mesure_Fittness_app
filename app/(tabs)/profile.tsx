@@ -2,7 +2,8 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch, Alert, Im
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { User, Settings, Bell, CircleHelp as HelpCircle, LogOut, ChevronRight, CreditCard as Edit3, Target, Award, Share2, Camera, Trophy, TrendingUp, Dumbbell, Calendar, Activity, Zap, Heart, Scale, Ruler, Clock, ChartBar as BarChart3, Sun, Moon, Smartphone } from 'lucide-react-native';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useWorkout } from '@/contexts/WorkoutContext';
 import { router } from 'expo-router';
@@ -14,9 +15,11 @@ export default function ProfileScreen() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
-  useEffect(() => {
-    loadUserProfile();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      loadUserProfile();
+    }, [])
+  );
 
   const loadUserProfile = async () => {
     try {
@@ -143,7 +146,21 @@ export default function ProfileScreen() {
 
   const bmiData = calculateBMI();
 
-  const menuItems = [
+  type MenuItem = {
+    icon: any;
+    label: string;
+    hasArrow?: boolean;
+    hasSwitch?: boolean;
+    onPress?: () => void;
+    onToggle?: (value: boolean) => void;
+    value?: boolean;
+    badge?: string;
+  };
+
+  const menuItems: Array<{
+    section: string;
+    items: MenuItem[];
+  }> = [
     {
       section: 'Account',
       items: [
@@ -449,7 +466,7 @@ export default function ProfileScreen() {
           <View key={sectionIndex} style={styles.section}>
             <Text style={styles.sectionTitle}>{section.section}</Text>
             <View style={styles.menuContainer}>
-              {section.items.map((item, index) => (
+              {section.items.map((item: MenuItem, index) => (
                 <TouchableOpacity 
                   key={index} 
                   style={[

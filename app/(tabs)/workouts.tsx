@@ -1,7 +1,8 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Plus, Calendar, CircleCheck as CheckCircle, Circle, ChevronLeft, ChevronRight } from 'lucide-react-native';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { useTheme } from '@/contexts/ThemeContext';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -63,9 +64,11 @@ export default function WorkoutsScreen() {
   const [routines, setRoutines] = useState<WorkoutRoutine[]>([]);
   const [completions, setCompletions] = useState<WorkoutCompletion[]>([]);
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      loadData();
+    }, [])
+  );
 
   useEffect(() => {
     generateCalendarData();
