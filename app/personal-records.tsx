@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, TextInput, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ArrowLeft, Plus, Trophy, TrendingUp, Calendar, Save, X, Quote } from 'lucide-react-native';
+import { ArrowLeft, Plus, Trophy, TrendingUp, Calendar, Save, X, Quote, Trash2, Edit3 } from 'lucide-react-native';
 import { useState, useEffect } from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useWorkout } from '@/contexts/WorkoutContext';
@@ -9,7 +9,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 export default function PersonalRecordsScreen() {
   const { theme, isDark } = useTheme();
-  const { personalRecords, addPersonalRecord } = useWorkout();
+  const { personalRecords, addPersonalRecord, deletePersonalRecord } = useWorkout();
   const [showAddModal, setShowAddModal] = useState(false);
   const [newRecord, setNewRecord] = useState({
     exerciseName: '',
@@ -101,6 +101,27 @@ export default function PersonalRecordsScreen() {
 
   const recordsByExercise = getRecordsByExercise();
 
+  const handleDeleteRecord = (recordId: string, exerciseName: string) => {
+    Alert.alert(
+      'Delete Record',
+      `Remove this ${exerciseName} record?`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await deletePersonalRecord(recordId);
+            } catch {
+              Alert.alert('Error', 'Failed to delete record');
+            }
+          },
+        },
+      ]
+    );
+  };
+
   const motivationalQuote = {
     text: "Champions aren't made in the gyms. Champions are made from something deep inside them - a desire, a dream, a vision.",
     author: "Muhammad Ali"
@@ -186,6 +207,12 @@ export default function PersonalRecordsScreen() {
                         <Text style={styles.recordNumber}>
                           {record.value} {record.unit}
                         </Text>
+                        <TouchableOpacity
+                          style={styles.deleteButton}
+                          onPress={() => handleDeleteRecord(record.id, exerciseName)}
+                        >
+                          <Trash2 size={14} color={theme.error} />
+                        </TouchableOpacity>
                       </View>
                     </View>
                   ))}
@@ -490,6 +517,10 @@ const createStyles = (theme: any, isDark: boolean) => StyleSheet.create({
     fontSize: 18,
     fontFamily: 'Inter-Bold',
     color: theme.text,
+    marginBottom: 4,
+  },
+  deleteButton: {
+    padding: 4,
   },
   emptyState: {
     backgroundColor: theme.surface,

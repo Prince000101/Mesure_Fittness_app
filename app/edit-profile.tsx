@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Alert, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ArrowLeft, Save, Camera, User } from 'lucide-react-native';
 import { useState, useEffect } from 'react';
@@ -6,6 +6,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { router } from 'expo-router';
 import { getUserProfile, saveUserProfile, UserProfile } from '@/utils/storage';
 import { LinearGradient } from 'expo-linear-gradient';
+import * as ImagePicker from 'expo-image-picker';
 
 export default function EditProfileScreen() {
   const { theme, isDark } = useTheme();
@@ -18,6 +19,7 @@ export default function EditProfileScreen() {
     weight: '',
     age: '',
     fitnessLevel: 'Intermediate',
+    avatar: undefined,
     preferences: {
       notifications: true,
       privacy: false,
@@ -38,6 +40,48 @@ export default function EditProfileScreen() {
     } catch (error) {
       Alert.alert('Error', 'Failed to load profile data');
     }
+  };
+
+  const handlePickPhoto = () => {
+    Alert.alert('Change Profile Photo', '', [
+      {
+        text: 'Take Photo',
+        onPress: async () => {
+          const { status } = await ImagePicker.requestCameraPermissionsAsync();
+          if (status !== 'granted') {
+            Alert.alert('Permission needed', 'Camera permission is required to take a photo.');
+            return;
+          }
+          const result = await ImagePicker.launchCameraAsync({
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 0.7,
+          });
+          if (!result.canceled && result.assets.length > 0) {
+            setProfile(prev => ({ ...prev, avatar: result.assets[0].uri }));
+          }
+        },
+      },
+      {
+        text: 'Choose from Gallery',
+        onPress: async () => {
+          const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+          if (status !== 'granted') {
+            Alert.alert('Permission needed', 'Gallery permission is required to choose a photo.');
+            return;
+          }
+          const result = await ImagePicker.launchImageLibraryAsync({
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 0.7,
+          });
+          if (!result.canceled && result.assets.length > 0) {
+            setProfile(prev => ({ ...prev, avatar: result.assets[0].uri }));
+          }
+        },
+      },
+      { text: 'Cancel', style: 'cancel' },
+    ]);
   };
 
   const handleSave = async () => {
@@ -64,14 +108,13 @@ export default function EditProfileScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
           <ArrowLeft size={24} color={theme.text} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Edit Profile</Text>
-        <TouchableOpacity 
-          style={[styles.saveButton, isLoading && styles.saveButtonDisabled]} 
+        <TouchableOpacity
+          style={[styles.saveButton, isLoading && styles.saveButtonDisabled]}
           onPress={handleSave}
           disabled={isLoading}
         >
@@ -80,26 +123,28 @@ export default function EditProfileScreen() {
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Avatar Section */}
         <View style={styles.avatarSection}>
-          <View style={styles.avatarContainer}>
-            <LinearGradient
-              colors={isDark ? ['#4A5568', '#2D3748'] : ['#667eea', '#764ba2']}
-              style={styles.avatarGradient}
-            >
-              <User size={40} color="#FFFFFF" />
-            </LinearGradient>
-            <TouchableOpacity style={styles.cameraButton}>
+          <TouchableOpacity style={styles.avatarContainer} onPress={handlePickPhoto}>
+            {profile.avatar ? (
+              <Image source={{ uri: profile.avatar }} style={styles.avatarImage} />
+            ) : (
+              <LinearGradient
+                colors={isDark ? ['#4A5568', '#2D3748'] : ['#667eea', '#764ba2']}
+                style={styles.avatarGradient}
+              >
+                <User size={40} color="#FFFFFF" />
+              </LinearGradient>
+            )}
+            <View style={styles.cameraButton}>
               <Camera size={16} color="#FFFFFF" />
-            </TouchableOpacity>
-          </View>
+            </View>
+          </TouchableOpacity>
           <Text style={styles.avatarText}>Tap to change photo</Text>
         </View>
 
-        {/* Personal Information */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Personal Information</Text>
-          
+
           <View style={styles.inputContainer}>
             <Text style={styles.inputLabel}>Full Name</Text>
             <TextInput
@@ -137,10 +182,9 @@ export default function EditProfileScreen() {
           </View>
         </View>
 
-        {/* Body Measurements */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Body Measurements</Text>
-          
+
           <View style={styles.inputContainer}>
             <Text style={styles.inputLabel}>Height</Text>
             <TextInput
@@ -165,7 +209,6 @@ export default function EditProfileScreen() {
           </View>
         </View>
 
-        {/* Fitness Level */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Fitness Level</Text>
           <View style={styles.fitnessLevelContainer}>
@@ -189,9 +232,8 @@ export default function EditProfileScreen() {
           </View>
         </View>
 
-        {/* Save Button */}
         <View style={styles.section}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.saveButtonLarge, isLoading && styles.saveButtonDisabled]}
             onPress={handleSave}
             disabled={isLoading}
@@ -213,152 +255,48 @@ export default function EditProfileScreen() {
 }
 
 const createStyles = (theme: any, isDark: boolean) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.background,
-  },
+  container: { flex: 1, backgroundColor: theme.background },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.border,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    paddingHorizontal: 20, paddingVertical: 16, borderBottomWidth: 1, borderBottomColor: theme.border,
   },
   backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: theme.surface,
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: 40, height: 40, borderRadius: 20, backgroundColor: theme.surface,
+    justifyContent: 'center', alignItems: 'center',
   },
-  headerTitle: {
-    fontSize: 18,
-    fontFamily: 'Inter-SemiBold',
-    color: theme.text,
-  },
-  saveButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: theme.surface,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  saveButtonDisabled: {
-    opacity: 0.5,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 20,
-  },
-  avatarSection: {
-    alignItems: 'center',
-    paddingVertical: 32,
-  },
-  avatarContainer: {
-    position: 'relative',
-    marginBottom: 12,
-  },
-  avatarGradient: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  headerTitle: { fontSize: 18, fontFamily: 'Inter-SemiBold', color: theme.text },
+  saveButton: { width: 40, height: 40, borderRadius: 20, backgroundColor: theme.surface, justifyContent: 'center', alignItems: 'center' },
+  saveButtonDisabled: { opacity: 0.5 },
+  content: { flex: 1, paddingHorizontal: 20 },
+  avatarSection: { alignItems: 'center', paddingVertical: 32 },
+  avatarContainer: { position: 'relative', marginBottom: 12 },
+  avatarGradient: { width: 100, height: 100, borderRadius: 50, justifyContent: 'center', alignItems: 'center' },
+  avatarImage: { width: 100, height: 100, borderRadius: 50 },
   cameraButton: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: theme.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
+    position: 'absolute', bottom: 0, right: 0, width: 32, height: 32, borderRadius: 16,
+    backgroundColor: theme.primary, justifyContent: 'center', alignItems: 'center',
   },
-  avatarText: {
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    color: theme.textSecondary,
-  },
-  section: {
-    marginBottom: 32,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontFamily: 'Inter-SemiBold',
-    color: theme.text,
-    marginBottom: 16,
-  },
-  inputContainer: {
-    marginBottom: 20,
-  },
-  inputLabel: {
-    fontSize: 16,
-    fontFamily: 'Inter-SemiBold',
-    color: theme.text,
-    marginBottom: 8,
-  },
+  avatarText: { fontSize: 14, fontFamily: 'Inter-Regular', color: theme.textSecondary },
+  section: { marginBottom: 32 },
+  sectionTitle: { fontSize: 20, fontFamily: 'Inter-SemiBold', color: theme.text, marginBottom: 16 },
+  inputContainer: { marginBottom: 20 },
+  inputLabel: { fontSize: 16, fontFamily: 'Inter-SemiBold', color: theme.text, marginBottom: 8 },
   textInput: {
-    backgroundColor: theme.surface,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    fontSize: 16,
-    fontFamily: 'Inter-Regular',
-    color: theme.text,
-    borderWidth: 1,
-    borderColor: theme.border,
+    backgroundColor: theme.surface, borderRadius: 12, paddingHorizontal: 16, paddingVertical: 14,
+    fontSize: 16, fontFamily: 'Inter-Regular', color: theme.text, borderWidth: 1, borderColor: theme.border,
   },
-  fitnessLevelContainer: {
-    flexDirection: 'row',
-    gap: 12,
-  },
+  fitnessLevelContainer: { flexDirection: 'row', gap: 12 },
   fitnessLevelButton: {
-    flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    backgroundColor: theme.surface,
-    borderWidth: 1,
-    borderColor: theme.border,
-    alignItems: 'center',
+    flex: 1, paddingVertical: 12, paddingHorizontal: 16, borderRadius: 12,
+    backgroundColor: theme.surface, borderWidth: 1, borderColor: theme.border, alignItems: 'center',
   },
-  fitnessLevelButtonActive: {
-    backgroundColor: theme.primary,
-    borderColor: theme.primary,
-  },
-  fitnessLevelText: {
-    fontSize: 14,
-    fontFamily: 'Inter-Medium',
-    color: theme.text,
-  },
-  fitnessLevelTextActive: {
-    color: '#FFFFFF',
-  },
-  saveButtonLarge: {
-    borderRadius: 12,
-    overflow: 'hidden',
-    shadowColor: theme.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: isDark ? 0.3 : 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
+  fitnessLevelButtonActive: { backgroundColor: theme.primary, borderColor: theme.primary },
+  fitnessLevelText: { fontSize: 14, fontFamily: 'Inter-Medium', color: theme.text },
+  fitnessLevelTextActive: { color: '#FFFFFF' },
+  saveButtonLarge: { borderRadius: 12, overflow: 'hidden' },
   saveButtonGradient: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 16,
-    gap: 8,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    paddingVertical: 16, gap: 8,
   },
-  saveButtonText: {
-    fontSize: 16,
-    fontFamily: 'Inter-SemiBold',
-    color: '#FFFFFF',
-  },
+  saveButtonText: { fontSize: 16, fontFamily: 'Inter-SemiBold', color: '#FFFFFF' },
 });

@@ -188,6 +188,14 @@ export const clearAllData = async (): Promise<void> => {
       STORAGE_KEYS.FITNESS_GOALS,
       STORAGE_KEYS.ACHIEVEMENTS,
       STORAGE_KEYS.APP_SETTINGS,
+      'workouts',
+      'workoutSessions',
+      'personalRecords',
+      'bodyMeasurements',
+      'workout_routines',
+      'workout_completions',
+      'onboarding_complete',
+      'themeMode',
     ]);
   } catch (error) {
     console.error('Error clearing all data:', error);

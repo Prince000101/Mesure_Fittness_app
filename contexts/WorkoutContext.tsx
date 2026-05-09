@@ -102,6 +102,8 @@ interface WorkoutContextType {
   completeWorkoutSession: () => Promise<void>;
   
   addPersonalRecord: (record: Omit<PersonalRecord, 'id'>) => Promise<void>;
+  updatePersonalRecord: (id: string, record: Partial<PersonalRecord>) => Promise<void>;
+  deletePersonalRecord: (id: string) => Promise<void>;
   addBodyMeasurement: (measurement: Omit<BodyMeasurement, 'id'>) => Promise<void>;
   
   // Loading states
@@ -338,6 +340,20 @@ export function WorkoutProvider({ children }: { children: ReactNode }) {
     await AsyncStorage.setItem('personalRecords', JSON.stringify(updatedRecords));
   };
 
+  const updatePersonalRecord = async (id: string, recordData: Partial<PersonalRecord>) => {
+    const updatedRecords = personalRecords.map(record =>
+      record.id === id ? { ...record, ...recordData } : record
+    );
+    setPersonalRecords(updatedRecords);
+    await AsyncStorage.setItem('personalRecords', JSON.stringify(updatedRecords));
+  };
+
+  const deletePersonalRecord = async (id: string) => {
+    const updatedRecords = personalRecords.filter(record => record.id !== id);
+    setPersonalRecords(updatedRecords);
+    await AsyncStorage.setItem('personalRecords', JSON.stringify(updatedRecords));
+  };
+
   const addBodyMeasurement = async (measurementData: Omit<BodyMeasurement, 'id'>) => {
     const newMeasurement: BodyMeasurement = {
       ...measurementData,
@@ -366,6 +382,8 @@ export function WorkoutProvider({ children }: { children: ReactNode }) {
         updateWorkoutSession,
         completeWorkoutSession,
         addPersonalRecord,
+        updatePersonalRecord,
+        deletePersonalRecord,
         addBodyMeasurement,
         isLoading,
         error,

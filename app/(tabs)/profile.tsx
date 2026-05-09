@@ -1,13 +1,13 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch, Alert, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { User, Settings, Bell, CircleHelp as HelpCircle, LogOut, ChevronRight, CreditCard as Edit3, Target, Award, Share2, Camera, Trophy, TrendingUp, Dumbbell, Calendar, Activity, Zap, Heart, Scale, Ruler, Clock, ChartBar as BarChart3, Sun, Moon, Smartphone } from 'lucide-react-native';
+import { User, Settings, Bell, CircleHelp as HelpCircle, LogOut, ChevronRight, CreditCard as Edit3, Target, Award, Share2, Camera, Trophy, TrendingUp, Dumbbell, Calendar, Activity, Zap, Heart, Scale, Ruler, Clock, ChartBar as BarChart3, Sun, Moon, Smartphone, X, Trash2 } from 'lucide-react-native';
 import { useState, useEffect, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useWorkout } from '@/contexts/WorkoutContext';
 import { router } from 'expo-router';
-import { getUserProfile, saveUserProfile, UserProfile } from '@/utils/storage';
+import { getUserProfile, saveUserProfile, clearAllData, UserProfile } from '@/utils/storage';
 
 export default function ProfileScreen() {
   const { theme, isDark, themeMode, setThemeMode } = useTheme();
@@ -146,6 +146,30 @@ export default function ProfileScreen() {
 
   const bmiData = calculateBMI();
 
+  const handleClearData = () => {
+    Alert.alert(
+      'Clear All Data',
+      'This will permanently delete all your profile, workouts, measurements, and records. This cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Clear Everything',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await clearAllData();
+              setUserProfile(null);
+              Alert.alert('Done', 'All data cleared.');
+              router.replace('/onboarding');
+            } catch {
+              Alert.alert('Error', 'Failed to clear data');
+            }
+          },
+        },
+      ]
+    );
+  };
+
   type MenuItem = {
     icon: any;
     label: string;
@@ -181,7 +205,7 @@ export default function ProfileScreen() {
           icon: Award, 
           label: 'Achievements', 
           hasArrow: true, 
-          badge: `${personalRecords.length} Earned`,
+          badge: personalRecords.length > 0 ? `${personalRecords.length} Earned` : 'No records',
           onPress: () => router.push('/achievements')
         },
         { 
@@ -246,6 +270,12 @@ export default function ProfileScreen() {
           label: 'Help & Support', 
           hasArrow: true,
           onPress: () => Alert.alert('Help & Support', 'Contact us at support@measurefitness.com for assistance.')
+        },
+        {
+          icon: Trash2,
+          label: 'Clear All Data',
+          hasArrow: true,
+          onPress: handleClearData,
         },
       ]
     }
@@ -313,10 +343,19 @@ export default function ProfileScreen() {
             >
               <View style={styles.profileHeader}>
                 <View style={styles.avatarContainer}>
-                  <Image 
-                    source={{ uri: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=400' }}
-                    style={styles.avatarImage}
-                  />
+                  {userProfile.avatar ? (
+                    <Image
+                      source={{ uri: userProfile.avatar }}
+                      style={styles.avatarImage}
+                    />
+                  ) : (
+                    <LinearGradient
+                      colors={isDark ? ['#667eea', '#764ba2'] : ['#667eea', '#764ba2']}
+                      style={styles.avatarFallback}
+                    >
+                      <User size={36} color="#FFFFFF" />
+                    </LinearGradient>
+                  )}
                   <TouchableOpacity style={styles.cameraButton}>
                     <Camera size={16} color="#FFFFFF" />
                   </TouchableOpacity>
@@ -604,6 +643,13 @@ const createStyles = (theme: any, isDark: boolean) => StyleSheet.create({
     borderRadius: 45,
     borderWidth: 4,
     borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  avatarFallback: {
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   cameraButton: {
     position: 'absolute',
